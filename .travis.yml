@@ -2,6 +2,7 @@ services:
   - docker
 
 script:
+  - cp .env.dist .env
   - docker-compose build
   - ./install.sh
   - docker-compose run --rm app python main.py
