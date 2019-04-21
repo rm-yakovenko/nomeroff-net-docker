@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  app:
+    build:
+      context: docker/app
+      args:
+        - INTEL_TENSORFLOW
+    command: waitress-serve --call 'main:create_app'
+    working_dir: /var/www/app
+    restart: unless-stopped
+    ports:
+      - $LISTEN:8080
+    volumes:
+      - ./:/var/www/app
+    logging:
+       driver: "json-file"
+       options:
+         max-size: "10m"
+         max-file: "5"

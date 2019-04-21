@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  app:
+    command: flask run -h 0.0.0.0 -p 8080
+    environment:
+      - "FLASK_APP=main.py"
+      - "FLASK_ENV=development"

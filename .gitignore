@@ -1,0 +1,5 @@
+.idea/
+.pyc
+docker-compose.override.yml
+nomeroff-net/
+.env
