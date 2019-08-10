@@ -8,13 +8,7 @@ Based on https://github.com/ria-com/nomeroff-net.
 
     `cp .env.dist .env`
     
-1. (Optional) If you have a modern CPU, try enabling INTEL_TENSORFLOW. It gives some performance boost.
-
-    ```yaml
-    # .env
-    INTEL_TENSORFLOW=1 
-    ```
-    
+   
 1. (Optional) Enable dev mode.
 
     `ln -s docker-compose.dev.yml docker-compose.override.yml`    
