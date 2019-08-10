@@ -11,17 +11,7 @@ NOMEROFF_NET_DIR = os.path.abspath('./nomeroff-net')
 
 # specify the path to Mask_RCNN if you placed it outside Nomeroff-net project
 MASK_RCNN_DIR = os.path.join(NOMEROFF_NET_DIR, 'Mask_RCNN')
-
-
 MASK_RCNN_LOG_DIR = os.path.join(NOMEROFF_NET_DIR, 'logs')
-MASK_RCNN_MODEL_PATH = os.path.join(NOMEROFF_NET_DIR, "models/mask_rcnn_numberplate_0700.h5")
-OPTIONS_MODEL_PATH = os.path.join(NOMEROFF_NET_DIR, "models/numberplate_options_2019_03_05.h5")
-
-# If you use gpu version tensorflow please change model to gpu version named like *-gpu.pb
-mode = "cpu"
-OCR_NP_UKR_TEXT = os.path.join(NOMEROFF_NET_DIR, "models/anpr_ocr_ua_12-{}.h5".format(mode))
-OCR_NP_EU_TEXT = os.path.join(NOMEROFF_NET_DIR, "models/anpr_ocr_eu_2-{}.h5".format(mode))
-OCR_NP_RU_TEXT = os.path.join(NOMEROFF_NET_DIR, "models/anpr_ocr_ru_3-{}.h5".format(mode))
 
 sys.path.append(NOMEROFF_NET_DIR)
 
@@ -38,7 +28,7 @@ def read_number_plates(url):
     global nnet, rectDetector, optionsDetector, textDetector
     if not nnet:
         nnet = Detector(MASK_RCNN_DIR, MASK_RCNN_LOG_DIR)
-        nnet.loadModel(MASK_RCNN_MODEL_PATH)
+        nnet.loadModel('latest')
 
     NP = nnet.detect([img])
 
@@ -50,30 +40,18 @@ def read_number_plates(url):
 
     if not optionsDetector:
         optionsDetector = OptionsDetector()
-        optionsDetector.load(OPTIONS_MODEL_PATH)
+        optionsDetector.load('latest')
 
     if not textDetector:
-        textDetector = TextDetector({
-            "eu_ua_2004_2015": {
-                "for_regions": ["eu_ua_2015", "eu_ua_2004"],
-                "model_path": OCR_NP_UKR_TEXT
-            },
-            "eu": {
-                "for_regions": ["eu", "eu_ua_1995"],
-                "model_path": OCR_NP_EU_TEXT
-            },
-            "ru": {
-                "for_regions": ["ru"],
-                "model_path": OCR_NP_RU_TEXT
-            }
-        })
+        textDetector = TextDetector.get_static_module("eu")()
+        textDetector.load("latest")
 
     # Detect points.
     points = rectDetector.detect(cv_img_masks)
     zones = rectDetector.get_cv_zonesBGR(img, points)
 
     # find standart
-    region_ids, state_ids = optionsDetector.predict(zones)
+    region_ids, state_ids, _ = optionsDetector.predict(zones)
     region_names = optionsDetector.getRegionLabels(region_ids)
 
     # find text with postprocessing by standart

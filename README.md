@@ -14,10 +14,6 @@ Based on https://github.com/ria-com/nomeroff-net.
     # .env
     INTEL_TENSORFLOW=1 
     ```
-
-1. Download NomeroffNet code and models.
-
-    `./install.sh`
     
 1. (Optional) Enable dev mode.
 
