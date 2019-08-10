@@ -4,8 +4,6 @@ services:
   app:
     build:
       context: docker/app
-      args:
-        - INTEL_TENSORFLOW
     command: waitress-serve --call 'main:create_app'
     working_dir: /var/www/app
     restart: unless-stopped
