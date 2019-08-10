@@ -19,7 +19,7 @@ Based on https://github.com/ria-com/nomeroff-net.
     
 1. Make an API call.
     
-    `time curl http://localhost:3116/read?url=https://automoto.r.worldssl.net/auto/Chevrolet-Lacetti-ne_ukazan-none-2007-16-23414105.jpeg`
+    `time curl http://localhost:3116/read?url=https://raw.githubusercontent.com/ria-com/nomeroff-net/master/examples/images/example1.jpeg`
     
     
     
