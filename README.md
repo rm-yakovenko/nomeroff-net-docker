@@ -4,6 +4,20 @@ Based on https://github.com/ria-com/nomeroff-net.
 
 ## Getting started
 
+1. Pick a version.
+
+If you want to use CPU version:
+
+```bash
+ln -sf docker-compose.cpu.yml docker-compose.yml
+```
+
+If you want to use GPU version:
+
+```bash
+ln -sf docker-compose.gpu.yml docker-compose.yml
+```
+
 1. Configure app.
 
     `cp .env.dist .env`
