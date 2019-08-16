@@ -1,0 +1,17 @@
+version: '2.3'
+
+services:
+  app:
+    build: docker/cpu
+    command: waitress-serve --call 'main:create_app'
+    working_dir: /var/www/app
+    restart: unless-stopped
+    ports:
+      - $LISTEN:8080
+    volumes:
+      - ./:/var/www/app
+    logging:
+       driver: "json-file"
+       options:
+         max-size: "10m"
+         max-file: "5"
