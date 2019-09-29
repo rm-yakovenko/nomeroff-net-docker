@@ -1,12 +1,12 @@
-version: '2'
+version: '2.3'
 
 services:
   app:
-    build:
-      context: docker/app
+    build: docker/gpu
     command: waitress-serve --call 'main:create_app'
     working_dir: /var/www/app
     restart: unless-stopped
+    runtime: nvidia
     ports:
       - $LISTEN:8080
     volumes:

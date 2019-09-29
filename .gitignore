@@ -1,5 +1,6 @@
 .idea/
 .pyc
 docker-compose.override.yml
+docker-compose.yml
 nomeroff-net/
 .env
