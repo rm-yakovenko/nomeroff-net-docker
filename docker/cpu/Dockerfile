@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:latest-py3
+FROM tensorflow/tensorflow:1.15.0-py3
 
 RUN apt update && apt install -y git libsm6 libxrender1
 
