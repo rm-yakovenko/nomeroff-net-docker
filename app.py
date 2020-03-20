@@ -4,8 +4,16 @@ import warnings
 from urllib.request import urlopen
 import matplotlib.image as mpimg
 import tensorflow as tf
-from tensorflow.python.keras.backend import set_session
 
+# https://github.com/tensorflow/tensorflow/issues/28287#issuecomment-495005162
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.Session(config=config)
+sess = tf.Session()
+graph = tf.get_default_graph()
+
+from tensorflow.python.keras.backend import set_session
+set_session(sess)
 
 warnings.filterwarnings('ignore')
 
@@ -20,14 +28,6 @@ sys.path.append(NOMEROFF_NET_DIR)
 
 # Import license plate recognition tools.
 from NomeroffNet import filters, RectDetector, TextDetector, OptionsDetector, Detector, textPostprocessing
-
-# https://github.com/tensorflow/tensorflow/issues/28287#issuecomment-495005162
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-session = tf.Session(config=config)
-sess = tf.Session()
-graph = tf.get_default_graph()
-set_session(sess)
 
 nnet = Detector(MASK_RCNN_DIR, MASK_RCNN_LOG_DIR)
 nnet.loadModel('latest')
