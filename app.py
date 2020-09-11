@@ -34,22 +34,26 @@ nnet.loadModel(NOMEROFF_NET_DIR)
 def read_number_plates(url):
     with urlopen(url) as file:
         img = mpimg.imread(file, 0)
+    cv_imgs_masks = nnet.detect_mask([img])
 
-        NP = nnet.detect([img])
+    number_plates = []
+    region_names = []
 
-        # Generate image mask.
-        cv_img_masks = filters.cv_img_mask(NP)
-
+    for cv_img_masks in cv_imgs_masks:
         # Detect points.
-        points = rectDetector.detect(cv_img_masks)
-        zones = rectDetector.get_cv_zonesBGR(img, points)
+        arrPoints = rectDetector.detect(cv_img_masks)
+
+        # cut zones
+        zones = rectDetector.get_cv_zonesBGR(img, arrPoints, 64, 295)
 
         # find standart
-        region_ids, state_ids, _ = optionsDetector.predict(zones)
-        region_names = optionsDetector.getRegionLabels(region_ids)
+        regionIds, stateIds, countLines = optionsDetector.predict(zones)
+        regionNames = optionsDetector.getRegionLabels(regionIds)
 
         # find text with postprocessing by standart
-        number_plates = textDetector.predict(zones, region_names)
-        number_plates = textPostprocessing(number_plates, region_names)
+        textArr = textDetector.predict(zones)
+        textArr = textPostprocessing(textArr, regionNames)
+        number_plates += textArr
+        region_names += regionNames
 
     return number_plates, region_names
