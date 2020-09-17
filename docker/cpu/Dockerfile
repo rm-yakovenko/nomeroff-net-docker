@@ -1,8 +1,14 @@
-FROM tensorflow/tensorflow:1.15.2-py3
+FROM tensorflow/tensorflow:2.3.0
 
-RUN apt update && apt install -y git libsm6 libxrender1
+ENV TZ=Europe/Kiev
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt update && apt install -y git libsm6 libxrender1 libgl1 libfontconfig1 libxtst6
 
-RUN pip install --no-cache-dir flask waitress Cython numpy wtforms keras==2.2.* tqdm \
-    git+https://github.com/matterport/Mask_RCNN
+RUN pip install --no-cache-dir flask waitress torch wtforms \
+    && pip install --no-cache-dir git+https://github.com/facebookresearch/detectron2.git
 
-RUN pip install --no-cache-dir nomeroff-net
+WORKDIR /var/www
+RUN git clone -b v1.0 https://github.com/ria-com/nomeroff-net.git \
+  && cd nomeroff-net/ \
+  && pip install --no-cache-dir -r requirements.txt \
+  && git clone https://github.com/youngwanLEE/centermask2.git
