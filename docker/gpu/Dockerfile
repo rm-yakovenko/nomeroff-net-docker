@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir flask waitress torch wtforms \
     && pip install --no-cache-dir git+https://github.com/facebookresearch/detectron2.git
 
 WORKDIR /var/www
-RUN git clone -b v1.0 https://github.com/ria-com/nomeroff-net.git \
+RUN git clone https://github.com/ria-com/nomeroff-net.git \
   && cd nomeroff-net/ \
   && pip install --no-cache-dir -r requirements.txt \
   && git clone https://github.com/youngwanLEE/centermask2.git
