@@ -1,8 +1,0 @@
-services:
-  - docker
-
-script:
-  - cp .env.dist .env
-  - ln -sf docker-compose.cpu.yml docker-compose.yml
-  - docker-compose build
-  - docker-compose run --rm app python main.py
