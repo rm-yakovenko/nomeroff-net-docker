@@ -10,6 +10,6 @@ RUN pip install --no-cache-dir flask waitress torch wtforms \
 WORKDIR /var/www
 RUN git clone https://github.com/ria-com/nomeroff-net.git \
   && cd nomeroff-net/ \
-  && sed 's/^tensorflow/#&/' requirements.txt \
+  && sed -i 's/^tensorflow/#&/' requirements.txt \
   && pip install --no-cache-dir -r requirements.txt \
   && git clone https://github.com/youngwanLEE/centermask2.git
