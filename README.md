@@ -20,20 +20,27 @@ ln -sf docker-compose.gpu.yml docker-compose.yml
 
 ### Configure app.
 
-    `cp .env.dist .env`
+```bash
+cp .env.dist .env
+```
     
    
 ### (Optional) Enable dev mode.
 
-    `ln -s docker-compose.dev.yml docker-compose.override.yml`    
+```bash
+ln -s docker-compose.dev.yml docker-compose.override.yml 
+```
 
 ### Start container.
- 
-    `docker-compose up`
+
+```bash 
+docker-compose up
+```
     
 ### Make an API call.
-    
-    `time curl http://localhost:3116/read?url=https://raw.githubusercontent.com/ria-com/nomeroff-net/master/examples/images/example1.jpeg`
-    
+
+```bash    
+time curl http://localhost:3116/read?url=https://raw.githubusercontent.com/ria-com/nomeroff-net/master/examples/images/example1.jpeg
+```    
     
     
