@@ -10,6 +10,7 @@ services:
       - $LISTEN:8080
     volumes:
       - ./:/var/www/app
+      - ./models:/var/www/nomeroff-net/NomeroffNet/Base/mcm/models
     logging:
        driver: "json-file"
        options:
