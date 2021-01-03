@@ -4,14 +4,8 @@ import warnings
 from urllib.request import urlopen
 import matplotlib.image as mpimg
 import tensorflow as tf
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
 
 warnings.filterwarnings('ignore')
-
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
 
 # change this property
 NOMEROFF_NET_DIR = os.path.abspath('../nomeroff-net')
