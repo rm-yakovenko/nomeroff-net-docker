@@ -12,6 +12,8 @@ services:
     volumes:
       - ./:/var/www/app
       - ./models:/var/www/nomeroff-net/NomeroffNet/Base/mcm/models
+    environment:
+      - TF_FORCE_GPU_ALLOW_GROWTH=true
     logging:
        driver: "json-file"
        options:
