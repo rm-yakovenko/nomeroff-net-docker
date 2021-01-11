@@ -3,9 +3,11 @@ import sys
 import warnings
 from urllib.request import urlopen
 import matplotlib.image as mpimg
-import tensorflow as tf
+from threading import Lock
 
 warnings.filterwarnings('ignore')
+
+lock = Lock()
 
 # change this property
 NOMEROFF_NET_DIR = os.path.abspath('../nomeroff-net')
@@ -34,26 +36,29 @@ nnet.loadModel(NOMEROFF_NET_DIR)
 def read_number_plates(url):
     with urlopen(url) as file:
         img = mpimg.imread(file, 0)
-    cv_imgs_masks = nnet.detect_mask([img])
 
-    number_plates = []
-    region_names = []
+    # Ensure that only one model is loaded among all threads.
+    with lock:
+        cv_imgs_masks = nnet.detect_mask([img])
 
-    for cv_img_masks in cv_imgs_masks:
-        # Detect points.
-        arrPoints = rectDetector.detect(cv_img_masks)
+        number_plates = []
+        region_names = []
 
-        # cut zones
-        zones = rectDetector.get_cv_zonesBGR(img, arrPoints, 64, 295)
+        for cv_img_masks in cv_imgs_masks:
+            # Detect points.
+            arrPoints = rectDetector.detect(cv_img_masks)
 
-        # find standart
-        regionIds, stateIds, countLines = optionsDetector.predict(zones)
-        regionNames = optionsDetector.getRegionLabels(regionIds)
+            # cut zones
+            zones = rectDetector.get_cv_zonesBGR(img, arrPoints, 64, 295)
 
-        # find text with postprocessing by standart
-        textArr = textDetector.predict(zones)
-        textArr = textPostprocessing(textArr, regionNames)
-        number_plates += textArr
-        region_names += regionNames
+            # find standart
+            regionIds, stateIds, countLines = optionsDetector.predict(zones)
+            regionNames = optionsDetector.getRegionLabels(regionIds)
 
-    return number_plates, region_names
+            # find text with postprocessing by standart
+            textArr = textDetector.predict(zones)
+            textArr = textPostprocessing(textArr, regionNames)
+            number_plates += textArr
+            region_names += regionNames
+
+        return number_plates, region_names
