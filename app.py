@@ -1,5 +1,6 @@
 import os
 import sys
+import cv2
 import warnings
 from urllib.request import urlopen
 import matplotlib.image as mpimg
@@ -9,29 +10,30 @@ warnings.filterwarnings('ignore')
 
 lock = Lock()
 
-# change this property
+# NomeroffNet path
 NOMEROFF_NET_DIR = os.path.abspath('../nomeroff-net')
 sys.path.append(NOMEROFF_NET_DIR)
-
 # Import license plate recognition tools.
-from NomeroffNet import  Detector
-from NomeroffNet import  filters
-from NomeroffNet import  RectDetector
-from NomeroffNet import  OptionsDetector
-from NomeroffNet import  TextDetector
-from NomeroffNet import  textPostprocessing
+from NomeroffNet.YoloV5Detector import Detector
+detector = Detector()
+detector.load()
+
+from NomeroffNet.BBoxNpPoints import NpPointsCraft, getCvZoneRGB, convertCvZonesRGBtoBGR, reshapePoints
+npPointsCraft = NpPointsCraft()
+npPointsCraft.load()
+
+from NomeroffNet.OptionsDetector import OptionsDetector
+from NomeroffNet.TextDetector import TextDetector
+
+from NomeroffNet import TextDetector
+from NomeroffNet import textPostprocessing
 
 # load models
-rectDetector = RectDetector()
-
 optionsDetector = OptionsDetector()
 optionsDetector.load("latest")
 
 textDetector = TextDetector.get_static_module("eu")()
 textDetector.load("latest")
-
-nnet = Detector()
-nnet.loadModel(NOMEROFF_NET_DIR)
 
 def read_number_plates(url):
     with urlopen(url) as file:
@@ -39,26 +41,20 @@ def read_number_plates(url):
 
     # Ensure that only one model is loaded among all threads.
     with lock:
-        cv_imgs_masks = nnet.detect_mask([img])
+      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        number_plates = []
-        region_names = []
+      targetBoxes = detector.detect_bbox(img)
+      all_points = npPointsCraft.detect(img, targetBoxes,[5,2,0])
 
-        for cv_img_masks in cv_imgs_masks:
-            # Detect points.
-            arrPoints = rectDetector.detect(cv_img_masks)
+      # cut zones
+      zones = convertCvZonesRGBtoBGR([getCvZoneRGB(img, reshapePoints(rect, 1)) for rect in all_points])
 
-            # cut zones
-            zones = rectDetector.get_cv_zonesBGR(img, arrPoints, 64, 295)
+      # predict zones attributes
+      regionIds, stateIds, countLines = optionsDetector.predict(zones)
+      regionNames = optionsDetector.getRegionLabels(regionIds)
 
-            # find standart
-            regionIds, stateIds, countLines = optionsDetector.predict(zones)
-            regionNames = optionsDetector.getRegionLabels(regionIds)
+      # find text with postprocessing by standart
+      textArr = textDetector.predict(zones)
+      textArr = textPostprocessing(textArr, regionNames)
 
-            # find text with postprocessing by standart
-            textArr = textDetector.predict(zones)
-            textArr = textPostprocessing(textArr, regionNames)
-            number_plates += textArr
-            region_names += regionNames
-
-        return number_plates, region_names
+    return textArr, regionNames
