@@ -50,7 +50,7 @@ def read_number_plates(url):
       zones = convertCvZonesRGBtoBGR([getCvZoneRGB(img, reshapePoints(rect, 1)) for rect in all_points])
 
       # predict zones attributes
-      regionIds, stateIds, countLines = optionsDetector.predict(zones)
+      regionIds, stateIds = optionsDetector.predict(zones)
       regionNames = optionsDetector.getRegionLabels(regionIds)
 
       # find text with postprocessing by standart
