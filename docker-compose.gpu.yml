@@ -11,7 +11,7 @@ services:
       - $LISTEN:8080
     volumes:
       - ./:/var/www/app
-      - ./models:/var/www/nomeroff-net/NomeroffNet/Base/mcm/models
+      - ./models:/var/www/nomeroff-net/data/models
     environment:
       - TF_FORCE_GPU_ALLOW_GROWTH=true
     logging:
