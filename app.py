@@ -32,7 +32,7 @@ from NomeroffNet import textPostprocessing
 optionsDetector = OptionsDetector()
 optionsDetector.load("latest")
 
-textDetector = TextDetector.get_static_module("eu")()
+textDetector = TextDetector.get_static_module("eu")
 textDetector.load("latest")
 
 def read_number_plates(url):
