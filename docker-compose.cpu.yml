@@ -1,13 +1,20 @@
 version: '2.3'
 
 services:
+  web:
+    image: nginx
+    restart: unless-stopped
+    volumes:
+      - ./docker/web/app.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - $LISTEN:80
+
   app:
     build: docker/cpu
     command: waitress-serve --call 'main:create_app'
     working_dir: /var/www/app
     restart: unless-stopped
-    ports:
-      - $LISTEN:8080
+    scale: 1
     volumes:
       - ./:/var/www/app
       - ./models:/var/www/nomeroff-net/data/models
