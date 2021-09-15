@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.3.2
+FROM tensorflow/tensorflow:2.6.0
 
 ENV TZ=Europe/Kiev
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
