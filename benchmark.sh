@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+URL=https://cdn2.riastatic.com/photosnew/auto/photo/bmw_x6-m__413276302f.jpg
+
 echo "Warming up"
 
-ab -s 180 -n 2 http://localhost:3116/read?url=https://raw.githubusercontent.com/ria-com/nomeroff-net/master/examples/images/example1.jpeg > /dev/null
+ab -s 180 -n 2 http://localhost:3116/read?url=$URL > /dev/null
 
 echo "Benchmarking"
 
-ab -n 10 http://localhost:3116/read?url=https://raw.githubusercontent.com/ria-com/nomeroff-net/master/examples/images/example1.jpeg
+ab -n 30 http://localhost:3116/read?url=$URL
