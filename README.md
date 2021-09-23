@@ -4,19 +4,7 @@ Based on https://github.com/ria-com/nomeroff-net.
 
 ## Getting started
 
-### Pick a version.
-
-If you want to use CPU version.
-
-```bash
-ln -sf docker-compose.cpu.yml docker-compose.yml
-```
-
 If you want to use GPU version. You need to have [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) installed.
-
-```bash
-ln -sf docker-compose.gpu.yml docker-compose.yml
-```
 
 ### Configure app.
 

@@ -1,6 +1,7 @@
 version: '2.3'
 
 services:
+
   web:
     image: nginx
     restart: unless-stopped
@@ -10,14 +11,18 @@ services:
       - $LISTEN:80
 
   app:
-    build: docker/cpu
+    build: docker/app
     command: waitress-serve --call 'main:create_app'
     working_dir: /var/www/app
     restart: unless-stopped
+    # uncomment `runtime` to use GPU
+    # runtime: nvidia
     scale: 1
     volumes:
       - ./:/var/www/app
       - ./models:/var/www/nomeroff-net/data/models
+    environment:
+      - TF_FORCE_GPU_ALLOW_GROWTH=true
     logging:
        driver: "json-file"
        options:
