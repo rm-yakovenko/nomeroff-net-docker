@@ -11,7 +11,10 @@ services:
       - $LISTEN:80
 
   app:
-    build: docker/app
+    build:
+      context: docker/app
+      args:
+        NOMEROFF_NET_REV: bcb4bcc
     command: waitress-serve --call 'main:create_app'
     working_dir: /var/www/app
     restart: unless-stopped
