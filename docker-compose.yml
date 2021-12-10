@@ -14,7 +14,7 @@ services:
     build:
       context: docker/app
       args:
-        NOMEROFF_NET_REV: bcb4bcc
+        NOMEROFF_NET_REV: 46ee37b
     command: waitress-serve --call 'main:create_app'
     working_dir: /var/www/app
     restart: unless-stopped
