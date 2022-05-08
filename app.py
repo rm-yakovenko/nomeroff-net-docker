@@ -1,60 +1,28 @@
 import os
 import sys
-import cv2
-import warnings
+import tempfile
 from urllib.request import urlopen
-import matplotlib.image as mpimg
-from threading import Lock
-
-warnings.filterwarnings('ignore')
-
-lock = Lock()
 
 # NomeroffNet path
-NOMEROFF_NET_DIR = os.path.abspath('../nomeroff-net')
-sys.path.append(NOMEROFF_NET_DIR)
-# Import license plate recognition tools.
-from NomeroffNet.YoloV5Detector import Detector
-detector = Detector()
-detector.load()
+nomeroff_net_dir = os.path.abspath('../nomeroff-net')
+sys.path.append(nomeroff_net_dir)
+from nomeroff_net import pipeline
+from nomeroff_net.tools import unzip
 
-from NomeroffNet.BBoxNpPoints import NpPointsCraft, getCvZoneRGB, convertCvZonesRGBtoBGR, reshapePoints
-npPointsCraft = NpPointsCraft()
-npPointsCraft.load()
-
-from NomeroffNet.OptionsDetector import OptionsDetector
-from NomeroffNet.TextDetector import TextDetector
-
-from NomeroffNet import TextDetector
-from NomeroffNet import textPostprocessing
-
-# load models
-optionsDetector = OptionsDetector()
-optionsDetector.load("latest")
-
-textDetector = TextDetector.get_static_module("eu")
-textDetector.load("latest")
+number_plate_detection_and_reading = pipeline("number_plate_detection_and_reading", image_loader="opencv")
 
 def read_number_plates(url):
-    with urlopen(url) as file:
-        img = mpimg.imread(file, 0)
+    global number_plate_detection_and_reading
 
-    # Ensure that only one model is loaded among all threads.
-    with lock:
-      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    with tempfile.NamedTemporaryFile() as fp:
+        with urlopen(url) as response:
+            fp.write(response.read())
 
-      targetBoxes = detector.detect_bbox(img)
-      all_points = npPointsCraft.detect(img, targetBoxes,[5,2,0])
+        result = number_plate_detection_and_reading([fp.name])
 
-      # cut zones
-      zones = convertCvZonesRGBtoBGR([getCvZoneRGB(img, reshapePoints(rect, 1)) for rect in all_points])
+    (images, images_bboxs,
+       images_points, images_zones, region_ids,
+       region_names, count_lines,
+       confidences, texts) = unzip(result)
 
-      # predict zones attributes
-      regionIds, stateIds = optionsDetector.predict(zones)
-      regionNames = optionsDetector.getRegionLabels(regionIds)
-
-      # find text with postprocessing by standart
-      textArr = textDetector.predict(zones)
-      textArr = textPostprocessing(textArr, regionNames)
-
-    return textArr, regionNames
+    return texts[0], region_names[0]
